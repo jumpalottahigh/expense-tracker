@@ -1,28 +1,104 @@
-import React from "react";
-import Head from "next/head";
-import Image from "next/image";
-import styles from "../styles/Home.module.css";
+import React from "react"
+import Head from "next/head"
+import Image from "next/image"
+import styles from "../styles/Home.module.css"
 
-const dummyData = [
-  {
-    name: "Prisma",
-    type: "groceries", // take away food | groceries | maintenance | fun / hobby | gas | (home upgrades, or potentially other expenses)
-    cost: 72,
-  },
-  {
-    name: "Prisma",
-    type: "groceries", //
-    cost: 72,
-  },
-  {
-    name: "Prisma",
-    type: "groceries", //
-    cost: 72,
-  },
-];
+// TODO: Next
+// 1) Add date selector and update the schema
+// 2) First version of the dashboard - super simple to begin with
+// 3) Persist data - Supabase, Firebase?
+// 4) Figure out auth
+// 5) Styling
+
+// const dummyData = [
+//   {
+//     name: "Prisma",
+//     category: "groceries", // take away food | groceries | maintenance | fun / hobby | gas | (home upgrades, or potentially other expenses)
+//     price: 72,
+//   },
+//   {
+//     name: "Prisma",
+//     category: "groceries", //
+//     price: 52,
+//   },
+//   {
+//     name: "Gas",
+//     category: "gas", //
+//     price: 60,
+//   },
+// ]
+
+const CATEGORIES = {
+  gas: "gas",
+  groceries: "groceries",
+}
+
+const LS_ITEMS_KEY = "ExpenseTracker_AllItems"
+const CURRENT_ITEM_DEFAULT_NAME = ""
+const CURRENT_ITEM_DEFAULT_PRICE = 0
+const ITEMS_DEFAULT_VALUE = []
 
 export default function Home() {
-  const [expenseItems, setExpenseItems] = React.useState(dummyData);
+  const [items, setItems] = React.useState(ITEMS_DEFAULT_VALUE)
+  const [currentItemName, setCurrentItemName] = React.useState(
+    CURRENT_ITEM_DEFAULT_NAME
+  )
+  const [currentItemCategory, setCurrentItemCategory] = React.useState(
+    CATEGORIES.gas
+  )
+  const [currentItemPrice, setCurrentItemPrice] = React.useState(
+    CURRENT_ITEM_DEFAULT_PRICE
+  )
+
+  const handleCurrentItemNameChange = (event) => {
+    setCurrentItemName(event.target.value)
+  }
+
+  const handleCurrentItemCategoryChange = (event) => {
+    setCurrentItemCategory(event.target.value)
+  }
+
+  const handleCurrentItemPriceChange = (event) => {
+    setCurrentItemPrice(event.target.value)
+  }
+
+  const handleSaveCurrentItem = (event) => {
+    event.preventDefault()
+
+    console.log("items: ", items)
+
+    const newItem = {
+      name: currentItemName,
+      category: currentItemCategory,
+      price: currentItemPrice,
+    }
+
+    const newItems = [...items, newItem]
+
+    // Update local state
+    setItems(newItems)
+
+    // Save to LS
+    localStorage.setItem(LS_ITEMS_KEY, JSON.stringify(newItems))
+
+    // Clear the form
+    setCurrentItemName(CURRENT_ITEM_DEFAULT_NAME)
+    setCurrentItemPrice(CURRENT_ITEM_DEFAULT_PRICE)
+  }
+
+  React.useEffect(() => {
+    // Fetch items from LS
+    const itemsFromLS = localStorage.getItem(LS_ITEMS_KEY)
+
+    if (itemsFromLS) {
+      setItems(JSON.parse(itemsFromLS))
+    }
+  }, [])
+
+  console.log("items: ", items)
+  // console.log("currentItemName: ", currentItemName)
+  // console.log("currentItemCategory: ", currentItemCategory)
+  // console.log("currentItemPrice: ", currentItemPrice)
 
   return (
     <div className={styles.container}>
@@ -37,13 +113,32 @@ export default function Home() {
 
         <div>
           <form>
-            <input name="name" type="text" />
-            <input name="cost" type="number" />
-            <radio>1</radio>
-            <radio>2</radio>
-            <radio>3</radio>
+            <input
+              name="name"
+              type="text"
+              value={currentItemName}
+              onChange={handleCurrentItemNameChange}
+            />
 
-            <input type="submit" value="Save" />
+            <select
+              name="category"
+              value={currentItemCategory}
+              onChange={handleCurrentItemCategoryChange}
+            >
+              <option value={CATEGORIES.gas}>{CATEGORIES.gas}</option>
+              <option value={CATEGORIES.groceries}>
+                {CATEGORIES.groceries}
+              </option>
+            </select>
+
+            <input
+              name="price"
+              type="number"
+              value={currentItemPrice}
+              onChange={handleCurrentItemPriceChange}
+            />
+
+            <button onClick={handleSaveCurrentItem}>Save</button>
           </form>
         </div>
 
@@ -52,65 +147,19 @@ export default function Home() {
 
           <div>
             items:
-            <pre>
-              {JSON.stringify(expenseItems)}
+            <pre style={{ whiteSpace: "break-spaces" }}>
+              {JSON.stringify(items)}
               {/* {expenseItems.map((item) => (
                 <div>{JSON.stringify(item)}</div>
               ))} */}
             </pre>
           </div>
         </div>
-
-        <p className={styles.description}>
-          Get started by editing{" "}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h2>Documentation &rarr;</h2>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h2>Learn &rarr;</h2>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className={styles.card}
-          >
-            <h2>Examples &rarr;</h2>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.card}
-          >
-            <h2>Deploy &rarr;</h2>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
       </main>
 
       <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{" "}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
+        Copyright © 2022-{new Date().getFullYear()} Georgi Yanev.
       </footer>
     </div>
-  );
+  )
 }
