@@ -4,7 +4,7 @@ import { Auth, ThemeSupa } from '@supabase/auth-ui-react'
 import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react'
 import DatePicker from 'react-datepicker'
 
-import { CATEGORIES, Category } from './types/general'
+import { CATEGORIES, Category } from '../types/general'
 import 'react-datepicker/dist/react-datepicker.css'
 import styles from '../styles/Home.module.css'
 
