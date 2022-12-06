@@ -3,9 +3,15 @@ import Head from 'next/head'
 import { Auth, ThemeSupa } from '@supabase/auth-ui-react'
 import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react'
 import DatePicker from 'react-datepicker'
-
-import { CATEGORIES, Category } from '../types/general'
 import 'react-datepicker/dist/react-datepicker.css'
+
+import { validateForm } from '../utils/general'
+import {
+  CATEGORIES,
+  Category,
+  CATEGORY_LABELS,
+  ExpenseItem,
+} from '../types/general'
 import styles from '../styles/Home.module.css'
 
 // TODO: Next
@@ -26,13 +32,17 @@ const CURRENT_ITEM_DEFAULT_NAME = ''
 const CURRENT_ITEM_DEFAULT_PRICE = 0
 const CURRENT_ITEM_DEFAULT_CATEGORY = CATEGORIES.gas as Category
 const CURRENT_ITEM_DEFAULT_DATE = new Date()
-const ITEMS_DEFAULT_VALUE = []
+const ITEMS_DEFAULT_VALUE = [] as ExpenseItem[]
+const STATUS_MESSAGE_DEFAULT_VALUE = [] as string[]
 
 export default function Home() {
   const session = useSession()
   const supabase = useSupabaseClient()
 
   const [items, setItems] = React.useState(ITEMS_DEFAULT_VALUE)
+  const [statusMessage, setStatusMessage] = React.useState(
+    STATUS_MESSAGE_DEFAULT_VALUE
+  )
   const [currentItemName, setCurrentItemName] = React.useState(
     CURRENT_ITEM_DEFAULT_NAME
   )
@@ -74,6 +84,14 @@ export default function Home() {
       name: currentItemName,
       category: currentItemCategory,
       price: currentItemPrice,
+      date: currentItemDate,
+    }
+
+    const formValidationInfo = validateForm(newItem)
+    setStatusMessage(formValidationInfo.statusMessage)
+
+    if (!formValidationInfo.isValid) {
+      return
     }
 
     const newItems = [...items, newItem]
@@ -148,27 +166,31 @@ export default function Home() {
             <h1 className={styles.title}>Expense Tracker</h1>
 
             <div>
-              <form>
+              <form className={styles.form}>
                 <input
+                  className={styles.formElement}
                   name="name"
                   type="text"
                   value={currentItemName}
                   onChange={handleCurrentItemNameChange}
+                  required
                 />
 
                 <select
+                  className={styles.formElement}
                   name="category"
                   value={currentItemCategory}
                   onChange={handleCurrentItemCategoryChange}
                 >
                   {Object.keys(CATEGORIES).map((category) => (
                     <option key={category} value={CATEGORIES[category]}>
-                      {CATEGORIES[category]}
+                      {CATEGORY_LABELS[category]}
                     </option>
                   ))}
                 </select>
 
                 <input
+                  className={styles.formElement}
                   name="price"
                   type="number"
                   value={currentItemPrice}
@@ -176,12 +198,24 @@ export default function Home() {
                 />
 
                 <DatePicker
+                  className={styles.formElement}
                   selected={currentItemDate}
                   onChange={handleCurrentItemDateChange}
                 />
 
-                <button onClick={handleSaveCurrentItem}>Save</button>
+                <button
+                  className={`${styles.formElement} ${styles.saveButton}`}
+                  onClick={handleSaveCurrentItem}
+                >
+                  Save
+                </button>
               </form>
+              {statusMessage &&
+                statusMessage.map((status) => (
+                  <div key={status} className={styles.statusMessage}>
+                    {status}
+                  </div>
+                ))}
             </div>
 
             <div>

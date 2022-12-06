@@ -8,6 +8,27 @@
   align-items: center;
 }
 
+.form {
+  display: grid;
+  gap: 20px;
+
+  
+}
+
+.formElement {
+  height: 30px;
+}
+
+.saveButton {
+  background: #dfc509;
+  color: #000;
+  border-color: #dfc509;
+}
+
+.statusMessage {
+  color: tomato;
+}
+
 .footer {
   display: flex;
   flex: 1;
