@@ -1,7 +1,11 @@
 import React from 'react'
 import Head from 'next/head'
 import { Auth, ThemeSupa } from '@supabase/auth-ui-react'
-import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react'
+import {
+  useUser,
+  useSession,
+  useSupabaseClient,
+} from '@supabase/auth-helpers-react'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 
@@ -14,23 +18,20 @@ import {
 } from '../types/general'
 import styles from '../styles/Home.module.css'
 
-// TODO: Next
-// ✔️ 1) Add date selector and update the schema
-// 2) First version of the dashboard - super simple to begin with
-// ✔️ 3) Persist data - Supabase, Firebase?
-// ✔️ 4) Figure out auth
-// 5) Styling
+// TODO:
+// 1. Create render view for items
+// 2. Create labels
+// 3. Sorting functionality, by month, etc.
 
 // Local storage keys
-const LS_ITEMS_KEY = 'ExpenseTracker_AllItems'
 const LS_CURRENT_ITEM_NAME = 'ExpenseTracker_CurrentItemName'
 const LS_CURRENT_ITEM_CATEGORY = 'ExpenseTracker_CurrentItemCategory'
 const LS_CURRENT_ITEM_PRICE = 'ExpenseTracker_CurrentItemPrice'
 const LS_DARK_MODE = 'ExpenseTracker_DarkMode'
 
 // Default state values
-const CURRENT_ITEM_DEFAULT_NAME = ''
 const CURRENT_ITEM_DEFAULT_PRICE = 0
+const CURRENT_ITEM_DEFAULT_NAME = ''
 const CURRENT_ITEM_DEFAULT_CATEGORY = CATEGORIES.gas as Category
 const CURRENT_ITEM_DEFAULT_DATE = new Date()
 const ITEMS_DEFAULT_VALUE = [] as ExpenseItem[]
@@ -38,10 +39,11 @@ const STATUS_MESSAGE_DEFAULT_VALUE = [] as string[]
 const DARK_MODE_DEFAULT_VALUE = true
 
 export default function Home() {
+  const user = useUser()
   const session = useSession()
   const supabase = useSupabaseClient()
 
-  const [items, setItems] = React.useState(ITEMS_DEFAULT_VALUE)
+  const [expenseItems, setExpenseItems] = React.useState(ITEMS_DEFAULT_VALUE)
   const [statusMessage, setStatusMessage] = React.useState(
     STATUS_MESSAGE_DEFAULT_VALUE
   )
@@ -59,6 +61,7 @@ export default function Home() {
   )
 
   const [darkMode, setDarkMode] = React.useState(DARK_MODE_DEFAULT_VALUE)
+  const [loading, setLoading] = React.useState(false)
 
   const handleDarkModeButtonToggle = () => {
     setDarkMode(!darkMode)
@@ -67,7 +70,6 @@ export default function Home() {
 
   const handleCurrentItemNameChange = (event) => {
     setCurrentItemName(event.target.value)
-    // TODO: if we ever decide to save the current item state in the DB, this will have to be debounced
     localStorage.setItem(LS_CURRENT_ITEM_NAME, event.target.value)
   }
 
@@ -78,7 +80,6 @@ export default function Home() {
 
   const handleCurrentItemPriceChange = (event) => {
     setCurrentItemPrice(event.target.value)
-    // TODO: if we ever decide to save the current item state in the DB, this will have to be debounced
     localStorage.setItem(LS_CURRENT_ITEM_PRICE, event.target.value)
   }
 
@@ -103,32 +104,78 @@ export default function Home() {
       return
     }
 
-    const newItems = [...items, newItem]
+    const newItems = [...expenseItems, newItem]
 
     // Update local state
-    setItems(newItems)
+    setExpenseItems(newItems)
 
-    // Save to LS
-    localStorage.setItem(LS_ITEMS_KEY, JSON.stringify(newItems))
-    localStorage.setItem(LS_CURRENT_ITEM_NAME, CURRENT_ITEM_DEFAULT_NAME)
-    localStorage.setItem(
-      LS_CURRENT_ITEM_PRICE,
-      String(CURRENT_ITEM_DEFAULT_PRICE)
-    )
+    // Save to Supabase
+    insertExpense()
 
     // Clear the form
     setCurrentItemName(CURRENT_ITEM_DEFAULT_NAME)
     setCurrentItemPrice(CURRENT_ITEM_DEFAULT_PRICE)
+
+    // Clear LS
+    localStorage.setItem(LS_CURRENT_ITEM_NAME, CURRENT_ITEM_DEFAULT_NAME)
+    localStorage.setItem(
+      LS_CURRENT_ITEM_PRICE,
+      JSON.stringify(CURRENT_ITEM_DEFAULT_PRICE)
+    )
   }
 
   React.useEffect(() => {
-    // Fetch items from LS
-    const itemsFromLS = localStorage.getItem(LS_ITEMS_KEY)
+    ;(async function () {
+      try {
+        setLoading(true)
 
-    if (itemsFromLS) {
-      setItems(JSON.parse(itemsFromLS))
+        let { data, error, status } = await supabase
+          .from('expenses')
+          .select(`name, category, date, price`)
+          .eq('user_id', user.id)
+
+        if (error && status !== 406) {
+          throw error
+        }
+
+        if (data) {
+          setExpenseItems(data)
+        }
+      } catch (error) {
+        console.error('Error loading user data!', error)
+      } finally {
+        setLoading(false)
+      }
+    })()
+  }, [session])
+
+  async function insertExpense() {
+    try {
+      setLoading(true)
+
+      const newExpense = {
+        user_id: user.id,
+        name: currentItemName,
+        category: currentItemCategory,
+        price: currentItemPrice,
+        date: currentItemDate,
+      }
+
+      let { error } = await supabase.from('expenses').insert(newExpense)
+
+      if (error) throw error
+    } catch (error) {
+      console.error('Failed inserting expense!', error)
+      setStatusMessage([
+        ...statusMessage,
+        `Could not save entry!: ${error.message}`,
+      ])
+    } finally {
+      setLoading(false)
     }
+  }
 
+  React.useEffect(() => {
     // Check and set app dark mode
     const darkModeFromLS = localStorage.getItem(LS_DARK_MODE)
     if (darkModeFromLS) {
@@ -162,8 +209,8 @@ export default function Home() {
     currentItemCategory,
     currentItemPrice
   )
-  console.log('items: ', items)
-  console.log('darkMode', darkMode)
+  console.log('user', user)
+  console.log('items from DB: ', expenseItems)
 
   return (
     <div
@@ -175,6 +222,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
+        <div className={styles.userName}>{user?.email}</div>
         <button
           className={styles.darkModeButton}
           onClick={handleDarkModeButtonToggle}
@@ -235,6 +283,9 @@ export default function Home() {
                   Save
                 </button>
               </form>
+            </div>
+
+            <div>
               {statusMessage &&
                 statusMessage.map((status) => (
                   <div key={status} className={styles.statusMessage}>
@@ -243,17 +294,24 @@ export default function Home() {
                 ))}
             </div>
 
-            {/* Buttons for dashboard view */}
-            <div className={styles.dashboardButtons}>
-              <button className={styles.dashboardButton}>Dashboard 1</button>
-              <button className={styles.dashboardButton}>Dashboard 2</button>
-              <button className={styles.dashboardButton}>Dashboard 3</button>
+            {/* TODO: */}
+            {/* Dashboard view of items, will be elsewhere */}
+            <div>
+              {loading && 'Loading...'}
+              <pre>{JSON.stringify(expenseItems, null, 4)}</pre>
             </div>
           </>
         )}
       </main>
       <footer className={styles.footer}>
-        Copyright © 2022-{new Date().getFullYear()} Georgi Yanev.
+        {/* TODO: WIP */}
+        {/* Buttons for dashboard view */}
+        <div className={styles.dashboardButtons}>
+          <button className={styles.dashboardButton}>Dashboard 1</button>
+          <button className={styles.dashboardButton}>Dashboard 2</button>
+          <button className={styles.dashboardButton}>Dashboard 3</button>
+        </div>
+        <p>Copyright © 2022-{new Date().getFullYear()} Georgi Yanev</p>
       </footer>
     </div>
   )

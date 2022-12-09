@@ -1,5 +1,11 @@
 .title {
-  color: #000;
+  color: tomato;
+}
+
+.userName {
+  position: absolute;
+  top: 30px;
+  left: 24px;
 }
 
 .darkModeButton {
@@ -48,7 +54,6 @@
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 17px;
-  margin-top: 60px;
 }
 
 .dashboardButton {
@@ -59,25 +64,14 @@
 }
 
 .footer {
-  display: flex;
-  flex: 1;
-  padding: 2rem 0;
+  padding: 1rem 0;
   border-top: 1px solid #eaeaea;
-  justify-content: center;
-  align-items: center;
   position: fixed;
   bottom: 0;
   width: 100%;
-}
-
-/* TODO: improve in the future how theming is handled */
-
-/* .expense-tracker-app-container.dark-mode .title {
-  color: tomato;
-} */
-
-@media (prefers-color-scheme: dark) {
-  .title {
-    color: tomato;
-  }
+  display: flex;
+  background: #000;
+  align-items: center;
+  justify-content: center;
+  flex-flow: column nowrap;
 }
