@@ -1,18 +1,33 @@
+.title {
+  color: #000;
+}
+
+.darkModeButton {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  height: 36px;
+  width: 36px;
+  font-size: 22px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .main {
-  min-height: 100vh;
+  min-height: 70vh;
   padding: 4rem 0;
   flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  position: relative;
 }
 
 .form {
   display: grid;
   gap: 20px;
-
-  
 }
 
 .formElement {
@@ -29,6 +44,20 @@
   color: tomato;
 }
 
+.dashboardButtons {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 17px;
+  margin-top: 60px;
+}
+
+.dashboardButton {
+  background: #6ba9df;
+  border-color: #6ba9df;
+  color: #000;
+  height: 40px;
+}
+
 .footer {
   display: flex;
   flex: 1;
@@ -36,10 +65,19 @@
   border-top: 1px solid #eaeaea;
   justify-content: center;
   align-items: center;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
 }
 
+/* TODO: improve in the future how theming is handled */
 
-
+/* .expense-tracker-app-container.dark-mode .title {
+  color: tomato;
+} */
 
 @media (prefers-color-scheme: dark) {
+  .title {
+    color: tomato;
+  }
 }

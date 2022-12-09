@@ -26,6 +26,7 @@ const LS_ITEMS_KEY = 'ExpenseTracker_AllItems'
 const LS_CURRENT_ITEM_NAME = 'ExpenseTracker_CurrentItemName'
 const LS_CURRENT_ITEM_CATEGORY = 'ExpenseTracker_CurrentItemCategory'
 const LS_CURRENT_ITEM_PRICE = 'ExpenseTracker_CurrentItemPrice'
+const LS_DARK_MODE = 'ExpenseTracker_DarkMode'
 
 // Default state values
 const CURRENT_ITEM_DEFAULT_NAME = ''
@@ -34,6 +35,7 @@ const CURRENT_ITEM_DEFAULT_CATEGORY = CATEGORIES.gas as Category
 const CURRENT_ITEM_DEFAULT_DATE = new Date()
 const ITEMS_DEFAULT_VALUE = [] as ExpenseItem[]
 const STATUS_MESSAGE_DEFAULT_VALUE = [] as string[]
+const DARK_MODE_DEFAULT_VALUE = true
 
 export default function Home() {
   const session = useSession()
@@ -55,6 +57,13 @@ export default function Home() {
   const [currentItemDate, setCurrentItemDate] = React.useState(
     CURRENT_ITEM_DEFAULT_DATE
   )
+
+  const [darkMode, setDarkMode] = React.useState(DARK_MODE_DEFAULT_VALUE)
+
+  const handleDarkModeButtonToggle = () => {
+    setDarkMode(!darkMode)
+    localStorage.setItem(LS_DARK_MODE, JSON.stringify(!darkMode))
+  }
 
   const handleCurrentItemNameChange = (event) => {
     setCurrentItemName(event.target.value)
@@ -120,6 +129,14 @@ export default function Home() {
       setItems(JSON.parse(itemsFromLS))
     }
 
+    // Check and set app dark mode
+    const darkModeFromLS = localStorage.getItem(LS_DARK_MODE)
+    if (darkModeFromLS) {
+      setDarkMode(JSON.parse(darkModeFromLS))
+    } else {
+      localStorage.setItem(LS_DARK_MODE, JSON.stringify(darkMode))
+    }
+
     // Update app state with current item data from LS
     const currentItemNameFromLS = localStorage.getItem(LS_CURRENT_ITEM_NAME)
     if (currentItemNameFromLS) {
@@ -146,15 +163,25 @@ export default function Home() {
     currentItemPrice
   )
   console.log('items: ', items)
+  console.log('darkMode', darkMode)
 
   return (
-    <div className={styles.container}>
+    <div
+      className={`expense-tracker-app-container ${darkMode ? 'dark-mode' : ''}`}
+    >
       <Head>
         <title>Expense Tracker</title>
         <meta name="description" content="Expense tracker" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
+        <button
+          className={styles.darkModeButton}
+          onClick={handleDarkModeButtonToggle}
+        >
+          {darkMode ? '☀️' : '🌑'}
+        </button>
+        <h1 className={styles.title}>Expense Tracker</h1>
         {!session ? (
           <Auth
             supabaseClient={supabase}
@@ -163,8 +190,6 @@ export default function Home() {
           />
         ) : (
           <>
-            <h1 className={styles.title}>Expense Tracker</h1>
-
             <div>
               <form className={styles.form}>
                 <input
@@ -218,15 +243,11 @@ export default function Home() {
                 ))}
             </div>
 
-            <div>
-              <h2>Dashboard</h2>
-
-              <div>
-                items:
-                <pre style={{ whiteSpace: 'break-spaces' }}>
-                  {JSON.stringify(items)}
-                </pre>
-              </div>
+            {/* Buttons for dashboard view */}
+            <div className={styles.dashboardButtons}>
+              <button className={styles.dashboardButton}>Dashboard 1</button>
+              <button className={styles.dashboardButton}>Dashboard 2</button>
+              <button className={styles.dashboardButton}>Dashboard 3</button>
             </div>
           </>
         )}
