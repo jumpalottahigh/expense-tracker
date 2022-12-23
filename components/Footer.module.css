@@ -1,0 +1,35 @@
+.dashboardButtons {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 17px;
+}
+
+.dashboardButton {
+  background: #6ba9df;
+  border-color: #6ba9df;
+  color: #000;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 120px;
+  border-radius: 2px;
+  font-weight: 600;
+}
+
+.dashboardButton:hover {
+  background-color: #1a7cd1;
+}
+
+.footer {
+  padding: 1rem 0;
+  border-top: 1px solid #eaeaea;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  background: #000;
+  align-items: center;
+  justify-content: center;
+  flex-flow: column nowrap;
+}

@@ -1,0 +1,17 @@
+.userName {
+  position: absolute;
+  top: 30px;
+  left: 24px;
+}
+
+.darkModeButton {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  height: 36px;
+  width: 36px;
+  font-size: 22px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
