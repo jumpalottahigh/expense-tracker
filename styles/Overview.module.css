@@ -5,3 +5,20 @@
 .chartSelectedMonth {
   margin-bottom: 40px;
 }
+
+.monthlyTotal {
+  font-weight: 600;
+  font-size: 22px;
+}
+
+.good {
+  color: rgb(93, 237, 93);
+}
+
+.average {
+  color: rgb(209, 151, 41);
+}
+
+.bad {
+  color: rgb(151, 22, 22);
+}

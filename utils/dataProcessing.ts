@@ -1,3 +1,4 @@
+import { sumBy } from 'lodash'
 import { getMonth, getYear, isThisMonth, parseISO } from 'date-fns'
 
 import { ExpenseItem } from '../types/general'
@@ -66,6 +67,19 @@ export function sortItemsByCategory(items: ExpenseItem[]) {
     }
 
     results[item.category].push(item)
+  })
+
+  return results
+}
+
+export function chartDataTotalPerCategory(sortedItemsByCategory) {
+  const results = []
+
+  Object.keys(sortedItemsByCategory).forEach((category) => {
+    const buffer = {}
+    buffer['category'] = category
+    buffer['total'] = sumBy(sortedItemsByCategory[category], 'price')
+    results.push(buffer)
   })
 
   return results

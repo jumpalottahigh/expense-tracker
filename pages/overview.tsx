@@ -16,11 +16,11 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+import { sumBy } from 'lodash'
 
 import {
-  getCurrentMonthItems,
+  chartDataTotalPerCategory,
   getItemsInMonthAndYear,
-  renderXAxisDate,
   sortItemsByCategory,
 } from '../utils'
 import { ExpenseItem } from '../types/general'
@@ -29,7 +29,32 @@ import Footer from '../components/Footer'
 import { DB_TABLE } from '../components/constants'
 import styles from '../styles/Overview.module.css'
 
+const MONTHS = {
+  0: 'January',
+  1: 'February',
+  2: 'March',
+  3: 'April',
+  4: 'May',
+  5: 'June',
+  6: 'July',
+  7: 'August',
+  8: 'September',
+  9: 'October',
+  10: 'November',
+  11: 'December',
+}
+
 const ITEMS_DEFAULT_VALUE = [] as ExpenseItem[]
+
+const MonthlyTotal = ({ total }) => (
+  <div
+    className={`${styles.monthlyTotal} ${
+      total < 1200 ? styles.good : total < 1500 ? styles.average : styles.bad
+    }`}
+  >
+    {total}
+  </div>
+)
 
 export default function Overview() {
   const user = useUser()
@@ -42,6 +67,7 @@ export default function Overview() {
     React.useState({}) // An object with categories of the current month items
   const [selectedMonth, setSelectedMonth] = React.useState(11)
   const [selectedYear, setSelectedYear] = React.useState(2022)
+  const [chartData, setChartData] = React.useState([])
 
   const handleChangeSelectedMonth = (event) => {
     setSelectedMonth(event.target.value)
@@ -79,19 +105,21 @@ export default function Overview() {
   React.useEffect(() => {
     if (!expenseItems) return
 
-    // const itemsThisMonth = getCurrentMonthItems(expenseItems)
     const itemsThisMonth = getItemsInMonthAndYear(
       expenseItems,
       selectedMonth,
       selectedYear
     )
+    const sortedItemsByCategoryPerDate = sortItemsByCategory(itemsThisMonth)
     setCurrentMonthItems(itemsThisMonth)
-    setCurrentMonthItemsByCategory(sortItemsByCategory(itemsThisMonth))
+    setCurrentMonthItemsByCategory(sortedItemsByCategoryPerDate)
+    setChartData(chartDataTotalPerCategory(sortedItemsByCategoryPerDate))
   }, [expenseItems, selectedMonth, selectedYear])
 
-  console.log('expenseItems: ', expenseItems)
-  console.log('currentMonthItems: ', currentMonthItems)
-  console.log('currentMonthItemsByCategory: ', currentMonthItemsByCategory)
+  // console.log('expenseItems: ', expenseItems)
+  // console.log('currentMonthItems: ', currentMonthItems)
+  // console.log('currentMonthItemsByCategory: ', currentMonthItemsByCategory)
+  console.log('chartData: ', chartData)
 
   return (
     <div
@@ -103,9 +131,6 @@ export default function Overview() {
       </Head>
       <main className="">
         <Nav />
-        {/* TODO: BarChart */}
-        {/* 1. Able to see totals by category */}
-        {/* 2. Able to switch from current to previous months */}
         <div className={styles.chartContainer}>
           <select
             className={styles.chartSelectedMonth}
@@ -113,18 +138,18 @@ export default function Overview() {
             value={selectedMonth}
             onChange={handleChangeSelectedMonth}
           >
-            <option value={0}>January</option>
-            <option value={1}>February</option>
-            <option value={2}>March</option>
-            <option value={3}>April</option>
-            <option value={4}>May</option>
-            <option value={5}>June</option>
-            <option value={6}>July</option>
-            <option value={7}>August</option>
-            <option value={8}>September</option>
-            <option value={9}>October</option>
-            <option value={10}>November</option>
-            <option value={11}>December</option>
+            <option value={0}>{MONTHS[0]}</option>
+            <option value={1}>{MONTHS[1]}</option>
+            <option value={2}>{MONTHS[2]}</option>
+            <option value={3}>{MONTHS[3]}</option>
+            <option value={4}>{MONTHS[4]}</option>
+            <option value={5}>{MONTHS[5]}</option>
+            <option value={6}>{MONTHS[6]}</option>
+            <option value={7}>{MONTHS[7]}</option>
+            <option value={8}>{MONTHS[8]}</option>
+            <option value={9}>{MONTHS[9]}</option>
+            <option value={10}>{MONTHS[10]}</option>
+            <option value={11}>{MONTHS[11]}</option>
           </select>
           <select
             className={styles.chartSelectedYear}
@@ -135,25 +160,26 @@ export default function Overview() {
             <option value={2022}>2022</option>
             <option value={2023}>2023</option>
           </select>
-
-          <BarChart width={730} height={250} data={expenseItems}>
+          <BarChart width={600} height={300} data={chartData}>
             {/* <CartesianGrid strokeDasharray="3 3" /> */}
-            <XAxis dataKey="date" />
+            <XAxis dataKey="category" />
             {/* <XAxis dataKey="date" tick={renderXAxisDate} /> */}
-            <YAxis />
+            <YAxis dataKey="total" />
             <Tooltip />
             <Legend />
-            <Bar dataKey="price" fill="#8884d8" />
-            {/* <Bar dataKey="category" fill="#82ca9d" /> */}
+            <Bar dataKey="total" fill="#8884d8" />
           </BarChart>
-
+          Total expense for{' '}
+          <strong>
+            {MONTHS[selectedMonth]} {selectedYear}
+          </strong>
+          : <MonthlyTotal total={sumBy(chartData, 'total')} />
           {/* TODO: LineChart over months of spending by category */}
-          <LineChart width={400} height={400} data={currentMonthItems}>
-            <Line type="monotone" dataKey="price" stroke="#8884d8" />
-            <CartesianGrid stroke="#ccc" />
-            <XAxis dataKey="name" />
-            <YAxis />
-          </LineChart>
+          {/* <LineChart width={600} height={300} data={chartData}>
+            <Line type="monotone" dataKey="total" stroke="#8884d8" />
+            <XAxis dataKey="category" />
+            <YAxis dataKey="total" />
+          </LineChart> */}
         </div>
 
         <div>{loading && 'Loading...'}</div>
