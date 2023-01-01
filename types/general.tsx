@@ -37,5 +37,5 @@ export type ExpenseItem = {
   name: string
   category: Category
   price: number
-  date: Date
+  date: string
 }

@@ -11,10 +11,11 @@ import 'react-datepicker/dist/react-datepicker.css'
 
 import Nav from '../components/Nav'
 import Footer from '../components/Footer'
-import { validateForm } from '../utils/general'
+import { validateForm } from '../utils'
 import { CATEGORIES, Category, CATEGORY_LABELS } from '../types/general'
 import styles from '../styles/Home.module.css'
 import { DB_TABLE } from '../components/constants'
+import { ExpenseItem } from '../types/general'
 
 // TODO:
 // 1. Create render view for items
@@ -83,7 +84,7 @@ export default function Home() {
       category: currentItemCategory,
       price: currentItemPrice,
       date: currentItemDate,
-    }
+    } as ExpenseItem
 
     const formValidationInfo = validateForm(newItem)
     setStatusMessage(formValidationInfo.statusMessage)
@@ -152,15 +153,6 @@ export default function Home() {
       setCurrentItemPrice(Number(currentItemPriceFromLS))
     }
   }, [])
-
-  // console.log(
-  //   'currentItem: ',
-  //   currentItemName,
-  //   currentItemCategory,
-  //   currentItemPrice
-  // )
-  // console.log('user', user)
-  // console.log('items from DB: ', expenseItems)
 
   return (
     <div
