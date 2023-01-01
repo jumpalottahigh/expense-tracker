@@ -40,7 +40,7 @@ export default function Overview() {
   const [currentMonthItems, setCurrentMonthItems] = React.useState([]) // Only the current month items
   const [currentMonthItemsByCategory, setCurrentMonthItemsByCategory] =
     React.useState({}) // An object with categories of the current month items
-  const [selectedMonth, setSelectedMonth] = React.useState(0)
+  const [selectedMonth, setSelectedMonth] = React.useState(11)
   const [selectedYear, setSelectedYear] = React.useState(2022)
 
   const handleChangeSelectedMonth = (event) => {
@@ -90,7 +90,6 @@ export default function Overview() {
   }, [expenseItems, selectedMonth, selectedYear])
 
   console.log('expenseItems: ', expenseItems)
-  console.log('selectedMonth: ', selectedMonth)
   console.log('currentMonthItems: ', currentMonthItems)
   console.log('currentMonthItemsByCategory: ', currentMonthItemsByCategory)
 
@@ -149,7 +148,7 @@ export default function Overview() {
           </BarChart>
 
           {/* TODO: LineChart over months of spending by category */}
-          <LineChart width={400} height={400} data={expenseItems}>
+          <LineChart width={400} height={400} data={currentMonthItems}>
             <Line type="monotone" dataKey="price" stroke="#8884d8" />
             <CartesianGrid stroke="#ccc" />
             <XAxis dataKey="name" />

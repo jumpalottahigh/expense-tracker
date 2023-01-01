@@ -3,7 +3,7 @@ import { getMonth, getYear, isThisMonth, parseISO } from 'date-fns'
 import { ExpenseItem } from '../types/general'
 
 export function renderXAxisDate({ x, y, payload }) {
-  console.log('payload: ', payload)
+  // console.log('payload: ', payload)
 
   return new Date(payload.value).toDateString()
 }
@@ -40,8 +40,6 @@ export function getItemsInMonthAndYear(
   const itemsInMonth = []
 
   items.forEach((item) => {
-    console.log('compare1: ', getMonth(parseISO(item.date)))
-    console.log('compare2: ', month)
     const parsedDate = parseISO(item.date)
     if (
       getMonth(parsedDate) === Number(month) &&
