@@ -31,7 +31,7 @@ const LS_CURRENT_ITEM_PRICE = 'ExpenseTracker_CurrentItemPrice'
 const CURRENT_ITEM_DEFAULT_PRICE = 0
 const CURRENT_ITEM_DEFAULT_NAME = ''
 const CURRENT_ITEM_DEFAULT_CATEGORY = CATEGORIES.gas as Category
-const CURRENT_ITEM_DEFAULT_DATE = new Date().toString()
+const CURRENT_ITEM_DEFAULT_DATE = new Date()
 const STATUS_MESSAGE_DEFAULT_VALUE = [] as string[]
 
 export default function Home() {
@@ -83,7 +83,7 @@ export default function Home() {
       name: currentItemName,
       category: currentItemCategory,
       price: currentItemPrice,
-      date: currentItemDate,
+      date: currentItemDate.toString(),
     } as ExpenseItem
 
     const formValidationInfo = validateForm(newItem)
