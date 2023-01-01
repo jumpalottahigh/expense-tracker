@@ -65,8 +65,12 @@ export default function Overview() {
   const [currentMonthItems, setCurrentMonthItems] = React.useState([]) // Only the current month items
   const [currentMonthItemsByCategory, setCurrentMonthItemsByCategory] =
     React.useState({}) // An object with categories of the current month items
-  const [selectedMonth, setSelectedMonth] = React.useState(11)
-  const [selectedYear, setSelectedYear] = React.useState(2022)
+
+  const NOW = new Date()
+  const DEFAULT_MONTH = NOW.getMonth()
+  const DEFAULT_YEAR = NOW.getFullYear()
+  const [selectedMonth, setSelectedMonth] = React.useState(DEFAULT_MONTH)
+  const [selectedYear, setSelectedYear] = React.useState(DEFAULT_YEAR)
   const [chartData, setChartData] = React.useState([])
 
   const handleChangeSelectedMonth = (event) => {
@@ -110,6 +114,7 @@ export default function Overview() {
       selectedMonth,
       selectedYear
     )
+
     const sortedItemsByCategoryPerDate = sortItemsByCategory(itemsThisMonth)
     setCurrentMonthItems(itemsThisMonth)
     setCurrentMonthItemsByCategory(sortedItemsByCategoryPerDate)
@@ -119,7 +124,9 @@ export default function Overview() {
   // console.log('expenseItems: ', expenseItems)
   // console.log('currentMonthItems: ', currentMonthItems)
   // console.log('currentMonthItemsByCategory: ', currentMonthItemsByCategory)
-  console.log('chartData: ', chartData)
+  // console.log('chartData: ', chartData)
+  // console.log('selectedMonth: ', selectedMonth)
+  // console.log('selectedYear: ', selectedYear)
 
   return (
     <div

@@ -184,6 +184,7 @@ export default function Home() {
                   value={currentItemName}
                   onChange={handleCurrentItemNameChange}
                   required
+                  placeholder="Note"
                 />
 
                 <select

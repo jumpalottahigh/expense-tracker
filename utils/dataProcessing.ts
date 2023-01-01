@@ -42,6 +42,7 @@ export function getItemsInMonthAndYear(
 
   items.forEach((item) => {
     const parsedDate = parseISO(item.date)
+
     if (
       getMonth(parsedDate) === Number(month) &&
       getYear(parsedDate) === Number(year)
