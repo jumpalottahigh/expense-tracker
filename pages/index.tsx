@@ -163,6 +163,7 @@ export default function Home() {
         <title>Expense Tracker</title>
         <meta name="description" content="Expense tracker" />
         <link rel="icon" href="/favicon.ico" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <main className={styles.main}>
         <Nav />

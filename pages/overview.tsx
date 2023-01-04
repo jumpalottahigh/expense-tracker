@@ -17,13 +17,14 @@ import {
   YAxis,
 } from 'recharts'
 import { sumBy } from 'lodash'
+import { format } from 'date-fns'
 
 import {
   chartDataTotalPerCategory,
   getItemsInMonthAndYear,
   sortItemsByCategory,
 } from '../utils'
-import { ExpenseItem } from '../types/general'
+import { CATEGORY_LABELS, ExpenseItem } from '../types/general'
 import Nav from '../components/Nav'
 import Footer from '../components/Footer'
 import { DB_TABLE } from '../components/constants'
@@ -55,6 +56,29 @@ const MonthlyTotal = ({ total }) => (
     {total}
   </div>
 )
+
+const ExpenseItemTable = ({ expenseItems }) => {
+  return (
+    <div className={styles.expenseItemTable}>
+      <div className={`${styles.expenseItemTableRow} ${styles.tableHeader}`}>
+        <span>Date</span>
+        <span>Name</span>
+        <span>Category</span>
+        <span>Price</span>
+      </div>
+      {expenseItems.map((item) => (
+        <div key={item.name} className={styles.expenseItemTableRow}>
+          <time dateTime={item.date}>
+            {format(new Date(item.date), 'dd.MM.yyyy')}
+          </time>
+          <span>{item.name}</span>
+          <span>{CATEGORY_LABELS[item.category]}</span>
+          <span>{item.price} €</span>
+        </div>
+      ))}
+    </div>
+  )
+}
 
 export default function Overview() {
   const user = useUser()
@@ -135,8 +159,9 @@ export default function Overview() {
     >
       <Head>
         <title>Expense Tracker: Overview</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
-      <main className="">
+      <main className={styles.overviewMain}>
         <Nav />
         <div className={styles.chartContainer}>
           <select
@@ -167,7 +192,7 @@ export default function Overview() {
             <option value={2022}>2022</option>
             <option value={2023}>2023</option>
           </select>
-          <BarChart width={600} height={300} data={chartData}>
+          <BarChart width={360} height={260} data={chartData}>
             {/* <CartesianGrid strokeDasharray="3 3" /> */}
             <XAxis dataKey="category" />
             {/* <XAxis dataKey="date" tick={renderXAxisDate} /> */}
@@ -181,6 +206,14 @@ export default function Overview() {
             {MONTHS[selectedMonth]} {selectedYear}
           </strong>
           : <MonthlyTotal total={sumBy(chartData, 'total')} />
+          <br />
+          <br />
+          <br />
+          <br />
+          <br />
+          Items:
+          <ExpenseItemTable expenseItems={currentMonthItems} />
+          {/* {console.log(chartData)} */}
           {/* TODO: LineChart over months of spending by category */}
           {/* <LineChart width={600} height={300} data={chartData}>
             <Line type="monotone" dataKey="total" stroke="#8884d8" />
