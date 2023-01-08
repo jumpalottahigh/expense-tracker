@@ -224,10 +224,10 @@ export default function Overview() {
             <option value={2023}>2023</option>
           </select>
           <BarChart
-            width={480}
+            width={360}
             height={260}
             data={chartData}
-            style={{ marginLeft: '-20px' }}
+            style={{ marginLeft: '-30px' }}
           >
             <XAxis
               dataKey="category"
