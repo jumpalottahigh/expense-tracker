@@ -1,4 +1,5 @@
 import React from 'react'
+import Link from 'next/link'
 import { useUser } from '@supabase/auth-helpers-react'
 
 import styles from './Nav.module.css'
@@ -26,14 +27,24 @@ export default function Nav() {
   }, [])
 
   return (
-    <>
-      <div className={styles.userName}>{user?.email}</div>
-      <button
-        className={styles.darkModeButton}
-        onClick={handleDarkModeButtonToggle}
-      >
-        {darkMode ? '☀️' : '🌑'}
-      </button>
-    </>
+    <div>
+      <div className={styles.topNav}>
+        <div>{user?.email}</div>
+        <button
+          className={styles.darkModeButton}
+          onClick={handleDarkModeButtonToggle}
+        >
+          {darkMode ? '☀️' : '🌑'}
+        </button>
+      </div>
+      <div className={styles.dashboardButtons}>
+        <Link className={styles.dashboardButton} href="/">
+          Add Expense
+        </Link>{' '}
+        <Link className={styles.dashboardButton} href="/overview">
+          View Expenses
+        </Link>{' '}
+      </div>
+    </div>
   )
 }

@@ -1,17 +1,40 @@
-.userName {
-  position: absolute;
-  top: 30px;
-  left: 24px;
+.topNav {
+  display: flex;
+  padding: 14px;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .darkModeButton {
-  position: absolute;
-  top: 24px;
-  right: 24px;
   height: 36px;
   width: 36px;
   font-size: 22px;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.dashboardButtons {
+  display: flex;
+  padding: 0 14px;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.dashboardButton {
+  background: #6ba9df;
+  border-color: #6ba9df;
+  color: #000;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 160px;
+  width: 48%;
+  border-radius: 2px;
+  font-weight: 600;
+}
+
+.dashboardButton:hover {
+  background-color: #1a7cd1;
 }

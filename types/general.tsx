@@ -33,6 +33,18 @@ export enum CATEGORY_LABELS {
   eatingOut = '🍽️ Eating Out',
 }
 
+export enum CATEGORY_EMOJI {
+  gas = '⛽',
+  groceries = '🥦',
+  maintenance = '😎',
+  hobbyFun = '🎞️',
+  homeImprovements = '🔨',
+  rent = '🏠',
+  carBill = '🚗',
+  utilityBill = '🚿',
+  eatingOut = '🍽️',
+}
+
 export type ExpenseItem = {
   name: string
   category: Category

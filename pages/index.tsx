@@ -165,8 +165,8 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
+      <Nav />
       <main className={styles.main}>
-        <Nav />
         <h1 className={styles.title}>Expense Tracker</h1>
         {!session ? (
           <Auth

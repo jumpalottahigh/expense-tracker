@@ -3,7 +3,7 @@
 }
 
 .chartContainer {
-  padding-top: 100px;
+  margin-top: 20px;
 }
 
 .chartSelectedMonth {
@@ -27,15 +27,12 @@
   color: rgb(151, 22, 22);
 }
 
-.expenseItemTable {
-}
-
 .expenseItemTableRow:nth-of-type(2n + 1) {
-  background: #908d8d;
+  background: #727272;
 }
 
 .expenseItemTableRow:nth-of-type(2n) {
-  background: #343333;
+  background: #5a5a5a;
 }
 
 .expenseItemTableRow:nth-of-type(1) {
@@ -46,6 +43,7 @@
   display: grid;
   grid-template-columns: 1fr 2fr 1fr 1fr;
   gap: 20px;
+  padding: 2px;
 }
 
 .expenseItemTableRow > span,
@@ -53,6 +51,16 @@
   font-size: 13px;
 }
 
+.expenseItemPrice {
+  text-align: right;
+}
+
 .expenseItemTableRow.tableHeader {
   font-size: 20px;
+}
+
+.customTooltip {
+  background: #5a5a5a;
+  color: #dedede;
+  padding: 10px;
 }

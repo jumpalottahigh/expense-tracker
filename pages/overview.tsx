@@ -24,7 +24,7 @@ import {
   getItemsInMonthAndYear,
   sortItemsByCategory,
 } from '../utils'
-import { CATEGORY_LABELS, ExpenseItem } from '../types/general'
+import { CATEGORY_EMOJI, CATEGORY_LABELS, ExpenseItem } from '../types/general'
 import Nav from '../components/Nav'
 import Footer from '../components/Footer'
 import { DB_TABLE } from '../components/constants'
@@ -67,17 +67,48 @@ const ExpenseItemTable = ({ expenseItems }) => {
         <span>Price</span>
       </div>
       {expenseItems.map((item) => (
-        <div key={item.name} className={styles.expenseItemTableRow}>
+        <div
+          key={`${item.date}-${item.name}`}
+          className={styles.expenseItemTableRow}
+        >
           <time dateTime={item.date}>
             {format(new Date(item.date), 'dd.MM.yyyy')}
           </time>
           <span>{item.name}</span>
           <span>{CATEGORY_LABELS[item.category]}</span>
-          <span>{item.price} €</span>
+          <span className={styles.expenseItemPrice}>{item.price} €</span>
         </div>
       ))}
     </div>
   )
+}
+
+const CustomCategoriesAxis = (props) => {
+  const { x, y, stroke, payload } = props
+
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <text x={0} y={0} dy={16} textAnchor="end" fill="#666">
+        {CATEGORY_EMOJI[payload.value]}
+      </text>
+    </g>
+  )
+}
+
+const CustomTooltip = (props) => {
+  const { active, payload, label } = props
+
+  if (active && payload && payload.length) {
+    return (
+      <div className={styles.customTooltip}>
+        {CATEGORY_LABELS[label]}:
+        <br />
+        {payload[0].value.toFixed(2)} €
+      </div>
+    )
+  }
+
+  return null
 }
 
 export default function Overview() {
@@ -161,8 +192,8 @@ export default function Overview() {
         <title>Expense Tracker: Overview</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
+      <Nav />
       <main className={styles.overviewMain}>
-        <Nav />
         <div className={styles.chartContainer}>
           <select
             className={styles.chartSelectedMonth}
@@ -192,13 +223,19 @@ export default function Overview() {
             <option value={2022}>2022</option>
             <option value={2023}>2023</option>
           </select>
-          <BarChart width={360} height={260} data={chartData}>
-            {/* <CartesianGrid strokeDasharray="3 3" /> */}
-            <XAxis dataKey="category" />
-            {/* <XAxis dataKey="date" tick={renderXAxisDate} /> */}
+          <BarChart
+            width={480}
+            height={260}
+            data={chartData}
+            style={{ marginLeft: '-20px' }}
+          >
+            <XAxis
+              dataKey="category"
+              interval={0}
+              tick={<CustomCategoriesAxis />}
+            />
             <YAxis dataKey="total" />
-            <Tooltip />
-            <Legend />
+            <Tooltip content={<CustomTooltip />} />
             <Bar dataKey="total" fill="#8884d8" />
           </BarChart>
           Total expense for{' '}
@@ -207,11 +244,6 @@ export default function Overview() {
           </strong>
           : <MonthlyTotal total={sumBy(chartData, 'total')} />
           <br />
-          <br />
-          <br />
-          <br />
-          <br />
-          Items:
           <ExpenseItemTable expenseItems={currentMonthItems} />
           {/* {console.log(chartData)} */}
           {/* TODO: LineChart over months of spending by category */}
@@ -220,6 +252,9 @@ export default function Overview() {
             <XAxis dataKey="category" />
             <YAxis dataKey="total" />
           </LineChart> */}
+          <br />
+          <br />
+          <br />
         </div>
 
         <div>{loading && 'Loading...'}</div>
