@@ -6,8 +6,9 @@ import {
   useSession,
   useSupabaseClient,
 } from '@supabase/auth-helpers-react'
-import DatePicker from 'react-datepicker'
+import DatePicker, { registerLocale } from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
+import enGB from 'date-fns/locale/en-GB'
 
 import Nav from '../components/Nav'
 import Footer from '../components/Footer'
@@ -152,6 +153,8 @@ export default function Home() {
     if (currentItemPriceFromLS) {
       setCurrentItemPrice(Number(currentItemPriceFromLS))
     }
+
+    registerLocale('en-GB', enGB)
   }, [])
 
   return (
@@ -211,6 +214,8 @@ export default function Home() {
 
                 <DatePicker
                   className={styles.formElement}
+                  dateFormat="dd.MM.yyyy"
+                  locale="en-GB"
                   selected={currentItemDate}
                   onChange={handleCurrentItemDateChange}
                 />

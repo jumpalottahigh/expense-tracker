@@ -53,7 +53,7 @@ const MonthlyTotal = ({ total }) => (
       total < 1200 ? styles.good : total < 1500 ? styles.average : styles.bad
     }`}
   >
-    {total}
+    {total.toFixed(2)} €
   </div>
 )
 
