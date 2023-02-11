@@ -45,6 +45,8 @@ const MONTHS = {
   11: 'December',
 }
 
+const LS_SALARY = 'ExpenseTracker_Salary'
+const DEFAULT_SALARY = 0
 const ITEMS_DEFAULT_VALUE = [] as ExpenseItem[]
 
 const MonthlyTotal = ({ total }) => (
@@ -56,6 +58,56 @@ const MonthlyTotal = ({ total }) => (
     {total.toFixed(2)} €
   </div>
 )
+
+const MonthlyBalance = ({ salary, total }) => (
+  <div>
+    Balance:{' '}
+    <span
+      className={`${styles.monthlyTotal} ${
+        total < salary / 2
+          ? styles.good
+          : total < salary
+          ? styles.average
+          : styles.bad
+      }`}
+    >
+      {(salary - total).toFixed(2)} €
+    </span>
+  </div>
+)
+
+const Salary = ({ initialSalary }) => {
+  const [currentlyEditedSalary, setCurrentlyEditedSalary] =
+    React.useState(initialSalary)
+  const [isSalaryEditable, setIsSalaryEditable] = React.useState(false)
+
+  const handleSalaryUpdate = (event) => {
+    setCurrentlyEditedSalary(Number(event.target.value))
+    localStorage.setItem(LS_SALARY, event.target.value)
+  }
+
+  return (
+    <div onClick={() => setIsSalaryEditable(!isSalaryEditable)}>
+      Salary:{' '}
+      {isSalaryEditable ? (
+        <input
+          type="number"
+          autoFocus
+          value={currentlyEditedSalary}
+          onChange={handleSalaryUpdate}
+          onKeyDown={(event) => {
+            if (event.code === 'Enter' || event.code === 'Escape') {
+              setIsSalaryEditable(false)
+            }
+          }}
+          onBlur={() => setIsSalaryEditable(false)}
+        />
+      ) : (
+        ` ${currentlyEditedSalary} €`
+      )}
+    </div>
+  )
+}
 
 const ExpenseItemTable = ({ expenseItems }) => {
   return (
@@ -127,6 +179,7 @@ export default function Overview() {
   const [selectedMonth, setSelectedMonth] = React.useState(DEFAULT_MONTH)
   const [selectedYear, setSelectedYear] = React.useState(DEFAULT_YEAR)
   const [chartData, setChartData] = React.useState([])
+  const [salary, setSalary] = React.useState(DEFAULT_SALARY)
 
   const handleChangeSelectedMonth = (event) => {
     setSelectedMonth(event.target.value)
@@ -135,6 +188,13 @@ export default function Overview() {
   const handleChangeSelectedYear = (event) => {
     setSelectedYear(event.target.value)
   }
+
+  React.useEffect(() => {
+    const currentSalary = localStorage.getItem(LS_SALARY)
+    if (currentSalary) {
+      setSalary(Number(currentSalary))
+    }
+  }, [])
 
   React.useEffect(() => {
     ;(async function () {
@@ -182,6 +242,8 @@ export default function Overview() {
   // console.log('chartData: ', chartData)
   // console.log('selectedMonth: ', selectedMonth)
   // console.log('selectedYear: ', selectedYear)
+
+  const totalExpenseForThisMonth = sumBy(chartData, 'total')
 
   return (
     <div
@@ -242,7 +304,10 @@ export default function Overview() {
           <strong>
             {MONTHS[selectedMonth]} {selectedYear}
           </strong>
-          : <MonthlyTotal total={sumBy(chartData, 'total')} />
+          : <MonthlyTotal total={totalExpenseForThisMonth} />
+          <Salary initialSalary={salary} />
+          <MonthlyBalance total={totalExpenseForThisMonth} salary={salary} />
+          <br />
           <br />
           <ExpenseItemTable expenseItems={currentMonthItems} />
           {/* {console.log(chartData)} */}
