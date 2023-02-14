@@ -18,6 +18,7 @@ import {
 } from 'recharts'
 import { sumBy } from 'lodash'
 import { format } from 'date-fns'
+import { useLocalStorage } from 'usehooks-ts'
 
 import {
   chartDataTotalPerCategory,
@@ -76,14 +77,12 @@ const MonthlyBalance = ({ salary, total }) => (
   </div>
 )
 
-const Salary = ({ initialSalary }) => {
-  const [currentlyEditedSalary, setCurrentlyEditedSalary] =
-    React.useState(initialSalary)
+const Salary = () => {
+  const [salary, setSalary] = useLocalStorage(LS_SALARY, DEFAULT_SALARY)
   const [isSalaryEditable, setIsSalaryEditable] = React.useState(false)
 
   const handleSalaryUpdate = (event) => {
-    setCurrentlyEditedSalary(Number(event.target.value))
-    localStorage.setItem(LS_SALARY, event.target.value)
+    setSalary(Number(event.target.value))
   }
 
   return (
@@ -93,7 +92,7 @@ const Salary = ({ initialSalary }) => {
         <input
           type="number"
           autoFocus
-          value={currentlyEditedSalary}
+          value={salary}
           onChange={handleSalaryUpdate}
           onKeyDown={(event) => {
             if (event.code === 'Enter' || event.code === 'Escape') {
@@ -103,7 +102,7 @@ const Salary = ({ initialSalary }) => {
           onBlur={() => setIsSalaryEditable(false)}
         />
       ) : (
-        ` ${currentlyEditedSalary} €`
+        ` ${salary} €`
       )}
     </div>
   )
@@ -179,7 +178,8 @@ export default function Overview() {
   const [selectedMonth, setSelectedMonth] = React.useState(DEFAULT_MONTH)
   const [selectedYear, setSelectedYear] = React.useState(DEFAULT_YEAR)
   const [chartData, setChartData] = React.useState([])
-  const [salary, setSalary] = React.useState(DEFAULT_SALARY)
+
+  const [salary] = useLocalStorage(LS_SALARY, DEFAULT_SALARY)
 
   const handleChangeSelectedMonth = (event) => {
     setSelectedMonth(event.target.value)
@@ -188,13 +188,6 @@ export default function Overview() {
   const handleChangeSelectedYear = (event) => {
     setSelectedYear(event.target.value)
   }
-
-  React.useEffect(() => {
-    const currentSalary = localStorage.getItem(LS_SALARY)
-    if (currentSalary) {
-      setSalary(Number(currentSalary))
-    }
-  }, [])
 
   React.useEffect(() => {
     ;(async function () {
@@ -305,7 +298,7 @@ export default function Overview() {
             {MONTHS[selectedMonth]} {selectedYear}
           </strong>
           : <MonthlyTotal total={totalExpenseForThisMonth} />
-          <Salary initialSalary={salary} />
+          <Salary />
           <MonthlyBalance total={totalExpenseForThisMonth} salary={salary} />
           <br />
           <br />
