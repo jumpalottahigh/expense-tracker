@@ -10,11 +10,7 @@ import { sumBy } from 'lodash'
 import { format } from 'date-fns'
 import { useLocalStorage } from 'usehooks-ts'
 
-import {
-  chartDataTotalPerCategory,
-  getItemsInMonthAndYear,
-  sortItemsByCategory,
-} from '../utils'
+import { chartDataTotalPerCategory, sortItemsByCategory } from '../utils'
 import { CATEGORY_EMOJI, CATEGORY_LABELS, ExpenseItem } from '../types/general'
 import Nav from '../components/Nav'
 import Footer from '../components/Footer'
@@ -166,7 +162,6 @@ export default function Overview() {
   const supabase = useSupabaseClient()
   const [loading, setLoading] = React.useState(false)
   const [expenseItems, setExpenseItems] = React.useState(ITEMS_DEFAULT_VALUE) // All items from the table
-  const [currentMonthItems, setCurrentMonthItems] = React.useState([]) // Only the current month items
   const [currentMonthItemsByCategory, setCurrentMonthItemsByCategory] =
     React.useState({}) // An object with categories of the current month items
 
@@ -207,8 +202,6 @@ export default function Overview() {
           .gte('date', startDateString) // Greater than or equal to the start date of the current month
           .lte('date', endDateString) // Less than or equal to the end date of the current month
 
-        // console.log('RAW FETCHED DATA: ', data)
-
         if (error && status !== 406) {
           throw error
         }
@@ -227,24 +220,10 @@ export default function Overview() {
   React.useEffect(() => {
     if (!expenseItems) return
 
-    const itemsThisMonth = getItemsInMonthAndYear(
-      expenseItems,
-      selectedMonth,
-      selectedYear
-    )
-
-    const sortedItemsByCategoryPerDate = sortItemsByCategory(itemsThisMonth)
-    setCurrentMonthItems(itemsThisMonth)
+    const sortedItemsByCategoryPerDate = sortItemsByCategory(expenseItems)
     setCurrentMonthItemsByCategory(sortedItemsByCategoryPerDate)
     setChartData(chartDataTotalPerCategory(sortedItemsByCategoryPerDate))
   }, [expenseItems, selectedMonth, selectedYear])
-
-  // console.log('expenseItems: ', expenseItems)
-  // console.log('currentMonthItems: ', currentMonthItems)
-  // console.log('currentMonthItemsByCategory: ', currentMonthItemsByCategory)
-  // console.log('chartData: ', chartData)
-  // console.log('selectedMonth: ', selectedMonth)
-  // console.log('selectedYear: ', selectedYear)
 
   const totalExpenseForThisMonth = sumBy(chartData, 'total')
 
@@ -313,14 +292,7 @@ export default function Overview() {
           <MonthlyBalance total={totalExpenseForThisMonth} salary={salary} />
           <br />
           <br />
-          <ExpenseItemTable expenseItems={currentMonthItems} />
-          {/* {console.log(chartData)} */}
-          {/* TODO: LineChart over months of spending by category */}
-          {/* <LineChart width={600} height={300} data={chartData}>
-            <Line type="monotone" dataKey="total" stroke="#8884d8" />
-            <XAxis dataKey="category" />
-            <YAxis dataKey="total" />
-          </LineChart> */}
+          <ExpenseItemTable expenseItems={expenseItems} />
           <br />
           <br />
           <br />
