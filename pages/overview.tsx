@@ -5,17 +5,7 @@ import {
   useSession,
   useSupabaseClient,
 } from '@supabase/auth-helpers-react'
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Legend,
-  LineChart,
-  Line,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts'
+import { Bar, BarChart, Tooltip, XAxis, YAxis } from 'recharts'
 import { sumBy } from 'lodash'
 import { format } from 'date-fns'
 import { useLocalStorage } from 'usehooks-ts'
@@ -119,7 +109,7 @@ const ExpenseItemTable = ({ expenseItems }) => {
       </div>
       {expenseItems.map((item) => (
         <div
-          key={`${item.date}-${item.name}`}
+          key={`${item.date}-${item.name}-${item.price}`}
           className={styles.expenseItemTableRow}
         >
           <time dateTime={item.date}>
@@ -162,6 +152,14 @@ const CustomTooltip = (props) => {
   return null
 }
 
+const dateWithoutTimezone = (date: Date) => {
+  const tzoffset = date.getTimezoneOffset() * 60000 //offset in milliseconds
+  const withoutTimezone = new Date(date.valueOf() - tzoffset)
+    .toISOString()
+    .slice(0, -1)
+  return withoutTimezone
+}
+
 export default function Overview() {
   const user = useUser()
   const session = useSession()
@@ -182,11 +180,11 @@ export default function Overview() {
   const [salary] = useLocalStorage(LS_SALARY, DEFAULT_SALARY)
 
   const handleChangeSelectedMonth = (event) => {
-    setSelectedMonth(event.target.value)
+    setSelectedMonth(parseInt(event.target.value))
   }
 
   const handleChangeSelectedYear = (event) => {
-    setSelectedYear(event.target.value)
+    setSelectedYear(parseInt(event.target.value))
   }
 
   React.useEffect(() => {
@@ -194,10 +192,22 @@ export default function Overview() {
       try {
         setLoading(true)
 
+        // Construct start and end dates for the current month
+        const startDate = new Date(selectedYear, selectedMonth, 1) // First day of current month
+        const endDate = new Date(selectedYear, selectedMonth + 1, 0) // Last day of current month
+
+        // Format start and end dates in 'YYYY-MM-DD' format
+        const startDateString = dateWithoutTimezone(startDate).split('T')[0]
+        const endDateString = dateWithoutTimezone(endDate).split('T')[0]
+
         let { data, error, status } = await supabase
           .from(DB_TABLE)
           .select(`name, category, date, price`)
           .eq('user_id', user.id)
+          .gte('date', startDateString) // Greater than or equal to the start date of the current month
+          .lte('date', endDateString) // Less than or equal to the end date of the current month
+
+        // console.log('RAW FETCHED DATA: ', data)
 
         if (error && status !== 406) {
           throw error
@@ -212,7 +222,7 @@ export default function Overview() {
         setLoading(false)
       }
     })()
-  }, [session])
+  }, [session, selectedMonth, selectedYear])
 
   React.useEffect(() => {
     if (!expenseItems) return
