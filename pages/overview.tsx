@@ -189,7 +189,7 @@ export default function Overview() {
 
         // Construct start and end dates for the current month
         const startDate = new Date(selectedYear, selectedMonth, 1) // First day of current month
-        const endDate = new Date(selectedYear, selectedMonth + 1, 0) // Last day of current month
+        const endDate = new Date(selectedYear, selectedMonth + 1) // First day of next month
 
         // Format start and end dates in 'YYYY-MM-DD' format
         const startDateString = dateWithoutTimezone(startDate).split('T')[0]
