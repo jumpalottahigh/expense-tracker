@@ -37,31 +37,27 @@ const DEFAULT_SALARY = 0
 const ITEMS_DEFAULT_VALUE = [] as ExpenseItem[]
 
 const MonthlyTotal = ({ total }) => (
-  <div
-    className={`${styles.monthlyTotal} ${
-      total < 1200 ? styles.good : total < 1500 ? styles.average : styles.bad
-    }`}
-  >
-    {total.toFixed(2)} €
-  </div>
+  <div className={`${styles.monthlyTotal}`}>{total.toFixed(2)} €</div>
 )
 
-const MonthlyBalance = ({ salary, total }) => (
-  <div>
-    Balance:{' '}
-    <span
-      className={`${styles.monthlyTotal} ${
-        total < salary / 2
-          ? styles.good
-          : total < salary
-          ? styles.average
-          : styles.bad
-      }`}
-    >
-      {(salary - total).toFixed(2)} €
-    </span>
-  </div>
-)
+const MonthlyBalance = ({ salary, total }) => {
+  return (
+    <div>
+      Balance:{' '}
+      <span
+        className={`${styles.monthlyTotal} ${
+          total < salary / 1.4
+            ? styles.good
+            : total < salary
+            ? styles.average
+            : styles.bad
+        }`}
+      >
+        {(salary - total).toFixed(2)} €
+      </span>
+    </div>
+  )
+}
 
 const Salary = () => {
   const [salary, setSalary] = useLocalStorage(LS_SALARY, DEFAULT_SALARY)
@@ -201,6 +197,7 @@ export default function Overview() {
           .eq('user_id', user.id)
           .gte('date', startDateString) // Greater than or equal to the start date of the current month
           .lte('date', endDateString) // Less than or equal to the end date of the current month
+          .order('date')
 
         if (error && status !== 406) {
           throw error
