@@ -64,3 +64,26 @@
   color: #dedede;
   padding: 10px;
 }
+
+.expenseItemFilters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.expenseItemFilters button {
+  cursor: pointer;
+
+  /* If using emoji + text*/
+  /* padding: 2px 8px;
+  width: 165px; */
+
+  /* If using only emoji */
+  padding: 4px;
+  width: 45px;
+}
+
+.selectedFilter {
+  border: 2px solid azure;
+}

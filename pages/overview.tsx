@@ -6,7 +6,7 @@ import {
   useSupabaseClient,
 } from '@supabase/auth-helpers-react'
 import { Bar, BarChart, Tooltip, XAxis, YAxis } from 'recharts'
-import { sumBy } from 'lodash'
+import { isEmpty, sumBy, uniqBy } from 'lodash'
 import { format } from 'date-fns'
 import { useLocalStorage } from 'usehooks-ts'
 
@@ -91,15 +91,62 @@ const Salary = () => {
 }
 
 const ExpenseItemTable = ({ expenseItems }) => {
+  const [currentFilter, setCurrentFilter] = React.useState(null)
+  const [filteredExpenseItems, setFilteredExpenseItems] =
+    React.useState(expenseItems)
+  const expenseTableUniqueCategories = uniqBy(expenseItems, 'category').map(
+    (item) => item.category
+  )
+
+  React.useEffect(() => {
+    if (!currentFilter) return
+
+    setFilteredExpenseItems(
+      expenseItems.filter((item) => item.category === currentFilter)
+    )
+  }, [currentFilter, expenseItems])
+
   return (
     <div className={styles.expenseItemTable}>
+      {/* Filters */}
+      {!isEmpty(expenseTableUniqueCategories) && (
+        <div className={`${styles.expenseItemFilters}`}>
+          {expenseTableUniqueCategories.map((filterCategory) => {
+            return (
+              <button
+                key={filterCategory}
+                title={filterCategory}
+                className={
+                  filterCategory === currentFilter ? styles.selectedFilter : ''
+                }
+                onClick={() => {
+                  setCurrentFilter(filterCategory)
+                }}
+              >
+                {/* {CATEGORY_LABELS[filterCategory]} */}
+                {CATEGORY_EMOJI[filterCategory]}
+              </button>
+            )
+          })}
+          {currentFilter && (
+            <button
+              onClick={() => {
+                setCurrentFilter(null)
+                setFilteredExpenseItems(expenseItems)
+              }}
+            >
+              ❌
+            </button>
+          )}
+        </div>
+      )}
       <div className={`${styles.expenseItemTableRow} ${styles.tableHeader}`}>
         <span>Date</span>
         <span>Name</span>
         <span>Category</span>
         <span>Price</span>
       </div>
-      {expenseItems.map((item) => (
+      {filteredExpenseItems.map((item) => (
         <div
           key={`${item.date}-${item.name}-${item.price}`}
           className={styles.expenseItemTableRow}
