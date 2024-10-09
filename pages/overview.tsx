@@ -92,19 +92,14 @@ const Salary = () => {
 
 const ExpenseItemTable = ({ expenseItems }) => {
   const [currentFilter, setCurrentFilter] = React.useState(null)
-  const [filteredExpenseItems, setFilteredExpenseItems] =
-    React.useState(expenseItems)
+  const [filteredExpenseItems, setFilteredExpenseItems] = React.useState([])
   const expenseTableUniqueCategories = uniqBy(expenseItems, 'category').map(
     (item) => item.category
   )
 
   React.useEffect(() => {
-    if (!currentFilter) return
-
-    setFilteredExpenseItems(
-      expenseItems.filter((item) => item.category === currentFilter)
-    )
-  }, [currentFilter, expenseItems])
+    setFilteredExpenseItems(expenseItems)
+  }, [expenseItems])
 
   return (
     <div className={styles.expenseItemTable}>
@@ -121,6 +116,11 @@ const ExpenseItemTable = ({ expenseItems }) => {
                 }
                 onClick={() => {
                   setCurrentFilter(filterCategory)
+                  setFilteredExpenseItems(
+                    expenseItems.filter(
+                      (item) => item.category === filterCategory
+                    )
+                  )
                 }}
               >
                 {/* {CATEGORY_LABELS[filterCategory]} */}
