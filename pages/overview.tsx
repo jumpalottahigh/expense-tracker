@@ -207,6 +207,7 @@ export default function Overview() {
   const [expenseItems, setExpenseItems] = React.useState(ITEMS_DEFAULT_VALUE) // All items from the table
   const [currentMonthItemsByCategory, setCurrentMonthItemsByCategory] =
     React.useState({}) // An object with categories of the current month items
+  const [availableYears, setAvailableYears] = React.useState<number[]>([]) // New state for dynamic years
 
   const NOW = new Date()
   const DEFAULT_MONTH = NOW.getMonth()
@@ -225,8 +226,45 @@ export default function Overview() {
     setSelectedYear(parseInt(event.target.value))
   }
 
+  // Effect to fetch available years using a Supabase RPC call
   React.useEffect(() => {
     ;(async function () {
+      if (!user?.id) return // Ensure user ID is available
+
+      try {
+        const { data, error } = await supabase.rpc('get_unique_expense_years', {
+          user_id_param: user.id,
+        })
+
+        if (error) {
+          console.error('Error fetching unique years with RPC:', error)
+          return
+        }
+
+        if (data && data.length > 0) {
+          // 'data' will be an array of objects like [{ year_value: 2022 }, { year_value: 2023 }]
+          const uniqueYears = data.map((row) => row.year_value)
+          setAvailableYears(uniqueYears)
+
+          // Set selectedYear to the latest available year if current selectedYear isn't present
+          if (!uniqueYears.includes(selectedYear) && uniqueYears.length > 0) {
+            setSelectedYear(uniqueYears[uniqueYears.length - 1])
+          }
+        } else {
+          // If no data, default to current year
+          setAvailableYears([NOW.getFullYear()])
+          setSelectedYear(NOW.getFullYear())
+        }
+      } catch (error) {
+        console.error('Error in fetching years useEffect:', error)
+      }
+    })()
+  }, [user?.id, selectedYear]) // Depend on user.id and selectedYear for initial setup
+
+  React.useEffect(() => {
+    ;(async function () {
+      if (!user) return // Ensure user is available before fetching
+
       try {
         setLoading(true)
 
@@ -259,7 +297,7 @@ export default function Overview() {
         setLoading(false)
       }
     })()
-  }, [session, selectedMonth, selectedYear])
+  }, [session, selectedMonth, selectedYear, user?.id]) // Added 'user' to dependency array
 
   React.useEffect(() => {
     if (!expenseItems) return
@@ -289,18 +327,11 @@ export default function Overview() {
             value={selectedMonth}
             onChange={handleChangeSelectedMonth}
           >
-            <option value={0}>{MONTHS[0]}</option>
-            <option value={1}>{MONTHS[1]}</option>
-            <option value={2}>{MONTHS[2]}</option>
-            <option value={3}>{MONTHS[3]}</option>
-            <option value={4}>{MONTHS[4]}</option>
-            <option value={5}>{MONTHS[5]}</option>
-            <option value={6}>{MONTHS[6]}</option>
-            <option value={7}>{MONTHS[7]}</option>
-            <option value={8}>{MONTHS[8]}</option>
-            <option value={9}>{MONTHS[9]}</option>
-            <option value={10}>{MONTHS[10]}</option>
-            <option value={11}>{MONTHS[11]}</option>
+            {Object.entries(MONTHS).map(([monthNum, monthName]) => (
+              <option key={monthNum} value={monthNum}>
+                {monthName}
+              </option>
+            ))}
           </select>
           <select
             className={styles.chartSelectedYear}
@@ -308,10 +339,11 @@ export default function Overview() {
             value={selectedYear}
             onChange={handleChangeSelectedYear}
           >
-            <option value={2022}>2022</option>
-            <option value={2023}>2023</option>
-            <option value={2024}>2024</option>
-            <option value={2025}>2025</option>
+            {availableYears.map((year) => (
+              <option key={year} value={year}>
+                {year}
+              </option>
+            ))}
           </select>
           <BarChart
             width={360}
