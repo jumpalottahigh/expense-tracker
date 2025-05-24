@@ -148,7 +148,7 @@ const ExpenseItemTable = ({ expenseItems }) => {
       </div>
       {filteredExpenseItems.map((item) => (
         <div
-          key={`${item.date}-${item.name}-${item.price}`}
+          key={btoa(`${Math.random()}`).substring(0, 12)}
           className={styles.expenseItemTableRow}
         >
           <time dateTime={item.date}>
@@ -311,6 +311,7 @@ export default function Overview() {
             <option value={2022}>2022</option>
             <option value={2023}>2023</option>
             <option value={2024}>2024</option>
+            <option value={2025}>2025</option>
           </select>
           <BarChart
             width={360}
