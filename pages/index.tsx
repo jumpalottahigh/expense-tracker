@@ -17,6 +17,7 @@ import { CATEGORIES, Category, CATEGORY_LABELS } from '../types/general'
 import styles from '../styles/Home.module.css'
 import { DB_TABLE } from '../components/constants'
 import { ExpenseItem } from '../types/general'
+import { useTheme } from '../context/ThemeContext'
 
 // TODO:
 // 1. Create render view for items
@@ -39,6 +40,7 @@ export default function Home() {
   const user = useUser()
   const session = useSession()
   const supabase = useSupabaseClient()
+  const { isDarkMode } = useTheme()
 
   const [statusMessage, setStatusMessage] = React.useState(
     STATUS_MESSAGE_DEFAULT_VALUE
@@ -159,8 +161,9 @@ export default function Home() {
 
   return (
     <div
-      // TODO: make darkMode a hook and reuse it
-      className="expense-tracker-app-container dark-mode"
+      className={`expense-tracker-app-container ${
+        isDarkMode ? 'dark-mode' : ''
+      }`}
     >
       <Head>
         <title>Expense Tracker</title>
@@ -175,7 +178,7 @@ export default function Home() {
           <Auth
             supabaseClient={supabase}
             appearance={{ theme: ThemeSupa }}
-            theme="dark"
+            theme={isDarkMode ? 'dark' : 'light'}
           />
         ) : (
           <>

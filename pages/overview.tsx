@@ -9,6 +9,7 @@ import { Bar, BarChart, Tooltip, XAxis, YAxis } from 'recharts'
 import { isEmpty, sumBy, uniqBy } from 'lodash'
 import { format } from 'date-fns'
 import { useLocalStorage } from 'usehooks-ts'
+import { useTheme } from '../context/ThemeContext'
 
 import { chartDataTotalPerCategory, sortItemsByCategory } from '../utils'
 import { CATEGORY_EMOJI, CATEGORY_LABELS, ExpenseItem } from '../types/general'
@@ -203,6 +204,7 @@ export default function Overview() {
   const user = useUser()
   const session = useSession()
   const supabase = useSupabaseClient()
+  const { isDarkMode } = useTheme()
   const [loading, setLoading] = React.useState(false)
   const [expenseItems, setExpenseItems] = React.useState(ITEMS_DEFAULT_VALUE) // All items from the table
   const [currentMonthItemsByCategory, setCurrentMonthItemsByCategory] =
@@ -311,8 +313,9 @@ export default function Overview() {
 
   return (
     <div
-      // TODO: make darkMode a hook and reuse it
-      className="expense-tracker-app-container dark-mode"
+      className={`expense-tracker-app-container ${
+        isDarkMode ? 'dark-mode' : ''
+      }`}
     >
       <Head>
         <title>Expense Tracker: Overview</title>

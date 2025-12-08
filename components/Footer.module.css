@@ -1,10 +1,10 @@
 .footer {
   padding: 1rem 0;
-  border-top: 1px solid #eaeaea;
+  border-top: 1px solid var(--border-color);
   bottom: 0;
   width: 100%;
   display: flex;
-  background: #000;
+  background: var(--bg-color);
   align-items: center;
   justify-content: center;
   flex-flow: column nowrap;

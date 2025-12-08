@@ -17,14 +17,34 @@ a {
 }
 
 /* Light mode and general styles */
+:root {
+  --bg-color: #f5f7fa;
+  --text-color: #333;
+  --surface-color: #ffffff;
+  --border-color: #e1e4e8;
+  --primary-color: #6ba9df;
+  --primary-hover: #1a7cd1;
+  --success-color: #2e7d32;
+  --warning-color: #ed6c02;
+  --error-color: #d32f2f;
+}
+
+[data-theme='dark'] {
+  --bg-color: #1a1a1a;
+  --text-color: #ffffff;
+  --surface-color: #2d2d2d;
+  --border-color: #404040;
+}
+
 .expense-tracker-app-container {
   min-height: 100vh;
   transition: all 125ms;
+  background-color: var(--bg-color);
+  color: var(--text-color);
 }
 
-/* Dark mode styles */
 .expense-tracker-app-container.dark-mode {
-  color-scheme: dark;
-  color: white;
-  background: black;
+  /* Keep compatible if class is still used elsewhere, but map to vars */
+  background-color: var(--bg-color);
+  color: var(--text-color);
 }
