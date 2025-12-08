@@ -182,7 +182,7 @@ export default function Home() {
           />
         ) : (
           <>
-            <div>
+            <div style={{ width: '80%', maxWidth: '400px' }}>
               <form className={styles.form}>
                 <input
                   className={styles.formElement}

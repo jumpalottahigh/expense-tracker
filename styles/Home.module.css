@@ -1,5 +1,7 @@
 .title {
-  color: green;
+  color: var(--primary-color);
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
 }
 
 .main {
@@ -7,25 +9,40 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  justify-content: center;
-  min-height: calc(100vh - 190px);
+  justify-content: flex-start;
+  margin-top: 80px;
+  min-height: calc(100vh - 270px);
   position: relative;
 }
 
 .form {
   display: grid;
   gap: 20px;
+  max-width: 400px;
+  width: 100%;
 }
 
 .formElement {
-  height: 30px;
+  background-color: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-color);
+  height: 40px;
+  padding: 0 12px;
   width: 100%;
 }
 
 .saveButton {
-  background: #dfc509;
-  border-color: #dfc509;
-  color: #000;
+  background-color: var(--primary-color);
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+
+.saveButton:hover {
+  background-color: var(--primary-hover);
 }
 
 .statusMessage {
