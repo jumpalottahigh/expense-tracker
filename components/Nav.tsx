@@ -38,11 +38,11 @@ export default function Nav() {
         </button>
       </div>
       <div className={styles.dashboardButtons}>
-        <Link className={styles.dashboardButton} href="/">
-          Add Expense
+        <Link href="/" legacyBehavior>
+          <a className={styles.dashboardButton}>Add Expense</a>
         </Link>{' '}
-        <Link className={styles.dashboardButton} href="/overview">
-          View Expenses
+        <Link href="/overview" legacyBehavior>
+          <a className={styles.dashboardButton}>View Expenses</a>
         </Link>{' '}
       </div>
     </div>
