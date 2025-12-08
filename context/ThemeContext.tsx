@@ -38,9 +38,9 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   }
 
   const value = {
-    theme,
+    theme: mounted ? theme : 'light',
     toggleTheme,
-    isDarkMode: theme === 'dark',
+    isDarkMode: mounted ? theme === 'dark' : false,
   }
 
   // Prevent flash of incorrect theme

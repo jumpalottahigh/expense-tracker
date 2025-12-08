@@ -10,6 +10,8 @@ import DatePicker, { registerLocale } from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import enGB from 'date-fns/locale/en-GB'
 
+registerLocale('en-GB', enGB)
+
 import Nav from '../components/Nav'
 import Footer from '../components/Footer'
 import { validateForm } from '../utils'
@@ -155,8 +157,6 @@ export default function Home() {
     if (currentItemPriceFromLS) {
       setCurrentItemPrice(Number(currentItemPriceFromLS))
     }
-
-    registerLocale('en-GB', enGB)
   }, [])
 
   return (
