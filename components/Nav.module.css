@@ -1,40 +1,52 @@
 .topNav {
-  display: flex;
-  padding: 14px;
-  justify-content: space-between;
   align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding: 14px;
 }
 
 .darkModeButton {
-  height: 36px;
-  width: 36px;
-  font-size: 22px;
-  display: flex;
-  justify-content: center;
   align-items: center;
+  display: flex;
+  font-size: 22px;
+  height: 36px;
+  justify-content: center;
+  width: 36px;
 }
 
 .dashboardButtons {
   display: flex;
-  padding: 0 14px;
-  justify-content: space-between;
   gap: 10px;
+  justify-content: space-between;
+  padding: 0 14px;
 }
 
 .dashboardButton {
-  background: #6ba9df;
-  border-color: #6ba9df;
-  color: #000;
-  height: 40px;
-  display: flex;
-  justify-content: center;
   align-items: center;
-  min-width: 160px;
-  width: 48%;
-  border-radius: 2px;
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-color);
+  cursor: pointer;
+  display: flex;
   font-weight: 600;
+  height: 48px;
+  justify-content: center;
+  min-width: 160px;
+  transition: all 0.2s ease;
+  width: 48%;
 }
 
 .dashboardButton:hover {
-  background-color: #1a7cd1;
+  background-color: var(--row-bg-header);
+}
+
+.dashboardButton.active {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: #fff;
+}
+
+.dashboardButton.active:hover {
+  background-color: var(--primary-hover);
 }
