@@ -11,8 +11,8 @@
 }
 
 .monthlyTotal {
-  font-weight: 600;
   font-size: 22px;
+  font-weight: 600;
 }
 
 .good {
@@ -28,22 +28,28 @@
 }
 
 .expenseItemTableRow:nth-of-type(2n + 1) {
-  background: #727272;
+  background: var(--row-bg-odd);
 }
 
 .expenseItemTableRow:nth-of-type(2n) {
-  background: #5a5a5a;
+  background: var(--row-bg-even);
 }
 
 .expenseItemTableRow:nth-of-type(1) {
-  background: #000;
+  background: var(--row-bg-header);
+  border-bottom: 2px solid var(--border-color);
+  font-weight: 600;
 }
 
 .expenseItemTableRow {
+  align-items: center;
+  border-radius: 4px;
+  color: var(--text-color);
   display: grid;
-  grid-template-columns: 1fr 2fr 1fr 1fr;
   gap: 20px;
-  padding: 2px;
+  grid-template-columns: 1fr 2fr 1fr 1fr;
+  margin-bottom: 2px;
+  padding: 12px;
 }
 
 .expenseItemTableRow > span,
@@ -66,6 +72,7 @@
 }
 
 .expenseItemFilters {
+  border-radius: 8px;
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
@@ -73,17 +80,29 @@
 }
 
 .expenseItemFilters button {
+  align-items: center;
+  background-color: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  color: var(--text-color);
   cursor: pointer;
+  display: flex;
+  font-size: 20px;
+  height: 48px;
+  justify-content: center;
+  padding: 6px;
+  transition: all 0.2s ease;
+  width: 48px;
+}
 
-  /* If using emoji + text*/
-  /* padding: 2px 8px;
-  width: 165px; */
-
-  /* If using only emoji */
-  padding: 4px;
-  width: 45px;
+.expenseItemFilters button:hover {
+  background-color: var(--row-bg-header);
+  transform: translateY(-1px);
 }
 
 .selectedFilter {
-  border: 2px solid azure;
+  background-color: var(--primary-color) !important;
+  border: 2px solid var(--primary-color) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  color: #fff !important;
 }

@@ -18,22 +18,32 @@ a {
 
 /* Light mode and general styles */
 :root {
-  --bg-color: #f5f7fa;
-  --text-color: #333;
+  --bg-color: #f0f2f5;
+  --text-color: #1a1a1a;
   --surface-color: #ffffff;
-  --border-color: #e1e4e8;
-  --primary-color: #6ba9df;
-  --primary-hover: #1a7cd1;
-  --success-color: #2e7d32;
-  --warning-color: #ed6c02;
-  --error-color: #d32f2f;
+  --border-color: #d1d5db;
+  --primary-color: #3b82f6;
+  --primary-hover: #2563eb;
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --error-color: #ef4444;
+
+  /* List items */
+  --row-bg-odd: #ffffff;
+  --row-bg-even: #f9fafb;
+  --row-bg-header: #e5e7eb;
 }
 
 [data-theme='dark'] {
-  --bg-color: #1a1a1a;
-  --text-color: #ffffff;
-  --surface-color: #2d2d2d;
-  --border-color: #404040;
+  --bg-color: #121212;
+  --text-color: #e5e5e5;
+  --surface-color: #1e1e1e;
+  --border-color: #333333;
+
+  /* List items */
+  --row-bg-odd: #2d2d2d;
+  --row-bg-even: #252525;
+  --row-bg-header: #1a1a1a;
 }
 
 .expense-tracker-app-container {
