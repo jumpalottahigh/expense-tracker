@@ -319,7 +319,6 @@ export default function Overview() {
     >
       <Head>
         <title>Expense Tracker: Overview</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <Nav />
       <main className={styles.overviewMain}>

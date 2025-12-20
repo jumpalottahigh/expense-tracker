@@ -3,8 +3,25 @@ body {
   padding: 0;
   margin: 0;
   min-height: 100vh;
+  /* Fallback for browsers that don't support dvh */
+  min-height: 100dvh;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+}
+
+/* Prevent auto-zoom on iOS by enforcing 16px font size on inputs */
+input,
+select,
+textarea {
+  font-size: 16px;
+}
+
+@media screen and (min-width: 768px) {
+  input,
+  select,
+  textarea {
+    font-size: initial;
+  }
 }
 
 a {
@@ -48,6 +65,8 @@ a {
 
 .expense-tracker-app-container {
   min-height: 100vh;
+  /* Fallback */
+  min-height: 100dvh;
   transition: all 125ms;
   background-color: var(--bg-color);
   color: var(--text-color);

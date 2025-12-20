@@ -12,6 +12,7 @@
   justify-content: flex-start;
   margin-top: 80px;
   min-height: calc(100vh - 270px);
+  min-height: calc(100dvh - 270px);
   position: relative;
 }
 
