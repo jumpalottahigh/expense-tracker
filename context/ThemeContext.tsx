@@ -14,12 +14,19 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const systemPrefersDark = useMediaQuery('(prefers-color-scheme: dark)')
-  const [theme, setTheme] = useLocalStorage<Theme>(
+  // We initialize with null to detect if it's the first time and no value is in LS
+  const [theme, setTheme] = useLocalStorage<Theme | null>(
     'ExpenseTracker_Theme',
-    systemPrefersDark ? 'dark' : 'light'
+    null
   )
   const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    // If no theme is stored (value is null), revert to system preference
+    if (theme === null) {
+      setTheme(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+    }
+  }, [theme, setTheme])
 
   // Prevent hydration mismatch
   useEffect(() => {
@@ -28,7 +35,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Sync theme with document element
   useEffect(() => {
-    if (mounted) {
+    if (mounted && theme) {
       document.documentElement.setAttribute('data-theme', theme)
     }
   }, [theme, mounted])
@@ -38,7 +45,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   }
 
   const value = {
-    theme: mounted ? theme : 'light',
+    theme: (mounted && theme) ? theme : 'light',
     toggleTheme,
     isDarkMode: mounted ? theme === 'dark' : false,
   }

@@ -1,14 +1,15 @@
 import React from 'react'
 import Head from 'next/head'
-import { Auth, ThemeSupa } from '@supabase/auth-ui-react'
+import { Auth } from '@supabase/auth-ui-react'
+import { ThemeSupa } from '@supabase/auth-ui-shared'
 import {
   useUser,
   useSession,
   useSupabaseClient,
-} from '@supabase/auth-helpers-react'
+} from '../context/SupabaseContext'
 import DatePicker, { registerLocale } from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
-import enGB from 'date-fns/locale/en-GB'
+import { enGB } from 'date-fns/locale'
 
 registerLocale('en-GB', enGB)
 
@@ -177,7 +178,17 @@ export default function Home() {
         {!session ? (
           <Auth
             supabaseClient={supabase}
-            appearance={{ theme: ThemeSupa }}
+            appearance={{
+              theme: ThemeSupa,
+              variables: {
+                default: {
+                  colors: {
+                    brand: '#3b82f6',
+                    brandAccent: '#2563eb',
+                  },
+                },
+              },
+            }}
             theme={isDarkMode ? 'dark' : 'light'}
           />
         ) : (

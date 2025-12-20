@@ -4,7 +4,7 @@ import {
   useUser,
   useSession,
   useSupabaseClient,
-} from '@supabase/auth-helpers-react'
+} from '../context/SupabaseContext'
 import { Bar, BarChart, Tooltip, XAxis, YAxis } from 'recharts'
 import { isEmpty, sumBy, uniqBy } from 'lodash'
 import { format } from 'date-fns'
