@@ -7,6 +7,9 @@ body {
   min-height: 100dvh;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 125ms, color 125ms;
 }
 
 /* Prevent auto-zoom on iOS by enforcing 16px font size on inputs */
